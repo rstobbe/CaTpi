@@ -22,14 +22,21 @@ clear INPUT
 %G = IMP.G(:,5:503,:);
 %qTscnr = IMP.qTscnr(5:2004) - 0.04;
 %G = IMP.G(:,5:2003,:);
-qTscnr = IMP.qTscnr;
+qTscnr = IMP.GQNT.scnrarr;
 G = IMP.G;
+G0 = IMP.GWFM.GQKSA;
+
+% [G0] = SolveGradQuant_v1b(qTscnr,IMP.GWFM.GQKSA,IMP.PROJimp.gamma);
+% G = G0;
+
+TGSR = IMP.KSMP.TGSR;
+GSR = IMP.KSMP.GSR;
 
 %-----------------------------------------------------
 % Plot
 %-----------------------------------------------------
 [A,B,C] = size(G);
-Gvis = zeros(A,B*2,C); L = zeros(1,B*2);
+Gvis = zeros(A,(B-1)*2,C); L = zeros(1,(B-1)*2);
 for n = 1:length(qTscnr)-1
     L((n-1)*2+1) = qTscnr(n);
     L(n*2) = qTscnr(n+1);
@@ -42,10 +49,11 @@ hFig = figure(1000); hold on; box on;
 plot(L,Gvis(N,:,1),'b-'); plot(L,Gvis(N,:,2),'g-'); plot(L,Gvis(N,:,3),'r-');
 %plot([PROJimp.pLocTime PROJimp.pLocTime],[-15 15],'k');
 %plot(L,Gmag,'k-');
+plot(TGSR,GSR(N,:,1),'b-',TGSR,GSR(N,:,2),'g-',TGSR,GSR(N,:,3),'r-')
 
 % ylim([-2.5 4.5]);
 xlim([0 9]);
-ylim([-10 60]);
+%ylim([-5 35]);
 %xticks([0.03 0.06 0.09 0.12]);
 title(['Traj',num2str(N)]);
 xlabel('(ms)','fontsize',10,'fontweight','bold');

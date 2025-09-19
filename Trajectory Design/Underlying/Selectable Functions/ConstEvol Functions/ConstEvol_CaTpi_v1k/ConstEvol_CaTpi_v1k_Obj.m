@@ -6,6 +6,7 @@ classdef ConstEvol_CaTpi_v1k_Obj < handle
 
 properties (SetAccess = public)
     kArr;
+    kMax;
     tArr;
     kMagArr;
     Vel0; Acc0; Jrk0;
@@ -49,6 +50,7 @@ function obj = ConstEvol_CaTpi_v1k_Obj(kArr,tArr,GradSlewMax,GradAccMax,PROJdgn,
     obj.Gamma = PROJimp.gamma;
     obj.Tro = tArr(end);
     obj.PROJdgn = PROJdgn;
+    obj.kMax = obj.kMagArr(end);
     obj.TST = TST;
     obj.tSeg0Array =  tArr(2:end) - tArr(1:end-1);
     CalcDeflectionAngle(obj);
@@ -542,7 +544,7 @@ end
 % Tatkmax
 %---------------------------------------------
 function Tatkmax = Tatkmax(obj)
-    Tatkmax = interp1(obj.kMagArr/obj.PROJdgn.kmax,obj.tSamp,1,'spline'); 
+    Tatkmax = interp1(obj.kMagArr/obj.kMax,obj.tSamp,1,'spline'); 
 end 
 
 %---------------------------------------------
@@ -580,7 +582,8 @@ function PlotEvolutionSetup(obj)
         title('Gradient Velocity');
         xlabel('ms'); ylabel('mT/m/ms');
         subplot(2,3,3); hold on; box on;
-        ylim([0 25]);
+        % ylim([0 25]);
+        ylim([0 80]);
         xlim([0 1.0]);
         title('Gradient Mag');
         xlabel('ms'); ylabel('mT/m');
@@ -717,7 +720,8 @@ function PlotEvolutionFullSetup(obj)
         title('Gradient Velocity');
         xlabel('ms'); ylabel('mT/m/ms');
         subplot(2,3,3); hold on; box on;
-        ylim([0 25]);
+        % ylim([0 25]);
+        ylim([0 80]);
         xlim([0 obj.Tro*1.1]); 
         title('Gradient Mag');
         xlabel('ms'); ylabel('mT/m');

@@ -2,6 +2,6 @@
 % 
 %=========================================================
 
-function [default] = Na23_v1a_Default2(SCRPTPATHS)
+function [default] = ProjConeDist_TPI1c_v1j_Default2(SCRPTPATHS)
 
 default = cell(1);

@@ -9,102 +9,110 @@ Status2('busy','Constrain Trajectory Evolution',2);
 err.flag = 0;
 err.msg = '';
 
-%---------------------------------------------
-% Get Input / Build Class
-%---------------------------------------------
-PROJdgn = INPUT.PROJdgn;
-PROJimp = INPUT.PROJimp;
-TST = INPUT.TST;
-tArr = INPUT.TArr.';
-kArr = INPUT.kArr*PROJdgn.kmax;
-clear INPUT
-
-%---------------------------------------------
-% Build TEVO Class
-%---------------------------------------------
-GradSlewMax = 195;
-GradAccMax = 8000;
-TEVO = ConstEvol_CaTpi_v1k_Obj(kArr,tArr,GradSlewMax,GradAccMax,PROJdgn,PROJimp,TST);
-TEVO.PlotEvolutionSetup();
-
-%---------------------------------------------
-% Test Deflection Angle
-%---------------------------------------------
-MaxAngle = 5;       % degree
-if(not(TEVO.TestDeflectionAngle(MaxAngle)))
-    TEVO.PlotDeflectionAngle();
-    title('Deflection Angle');
-    err.flag = 1;
-    err.msg = 'Trajectory must be solved more finely (deflection angle)';
-    return
-end
-
-%---------------------------------------------
-% First Step
-%---------------------------------------------
-%JrkFirst = CACC.gaccstart*PROJimp.gamma*1.5;
-JrkFirst = CACC.gaccstart*PROJimp.gamma;
-tSeg = TEVO.SolveAccRampSpecifyJrk(JrkFirst);
-TEVO.BuildTimeArray(tSeg);
-TEVO.MoveNext();
-
-%---------------------------------------------
-% Ramp up acceleration
-%---------------------------------------------
-JrkStart = CACC.gaccstart*PROJimp.gamma;
-AccStart = CACC.gvelstart*PROJimp.gamma;
 while true
-    tSeg = TEVO.SolveAccRampSpecifyJrk(JrkStart);
-    if TEVO.TestGreaterSpecifyAcc(AccStart)
-        break
-    end
-    TEVO.BuildTimeArray(tSeg);
-    TEVO.PlotEvolution(100);
-    TEVO.MoveNext();
-end
 
-%---------------------------------------------
-% Maintain acceleration
-%---------------------------------------------
-FracDecel = CACC.fracdecel;
-while true
-    tSeg = TEVO.SolveSpecifyAcc(AccStart); 
-    if TEVO.TestFractionOfP(FracDecel)
-        TEVO.PlotSegmentMarker;
-        break
+    %---------------------------------------------
+    % Get Input / Build Class
+    %---------------------------------------------
+    PROJdgn = INPUT.PROJdgn;
+    PROJimp = INPUT.PROJimp;
+    TST = INPUT.TST;
+    tArr = INPUT.TArr.';
+    kArr = INPUT.kArr*PROJdgn.kmax;
+    % clear INPUT
+    
+    %---------------------------------------------
+    % Build TEVO Class
+    %---------------------------------------------
+    GradSlewMax = 195;
+    GradAccMax = 8000;
+    TEVO = ConstEvol_CaTpi_v1k_Obj(kArr,tArr,GradSlewMax,GradAccMax,PROJdgn,PROJimp,TST);
+    TEVO.PlotEvolutionSetup();
+    
+    %---------------------------------------------
+    % Test Deflection Angle
+    %---------------------------------------------
+    MaxAngle = 5;       % degree
+    if(not(TEVO.TestDeflectionAngle(MaxAngle)))
+        TEVO.PlotDeflectionAngle();
+        title('Deflection Angle');
+        err.flag = 1;
+        err.msg = 'Trajectory must be solved more finely (deflection angle)';
+        return
     end
+    
+    %---------------------------------------------
+    % First Step
+    %---------------------------------------------
+    %JrkFirst = CACC.gaccstart*PROJimp.gamma*1.5;
+    JrkFirst = CACC.gaccstart*PROJimp.gamma;
+    tSeg = TEVO.SolveAccRampSpecifyJrk(JrkFirst);
     TEVO.BuildTimeArray(tSeg);
-    TEVO.PlotEvolution(100);
     TEVO.MoveNext();
-end
-
-%---------------------------------------------
-% Ramp to deceleration
-%---------------------------------------------
-JrkTransition = CACC.gacctransition*PROJimp.gamma;
-AccReturn = CACC.gvelreturn*PROJimp.gamma;
-while true
-    tSeg = TEVO.SolveAccRampSpecifyJrk(-JrkTransition); 
-    if TEVO.TestLessSpecifyAcc(-AccReturn)
-        TEVO.PlotSegmentMarker;
-        break
+    
+    %---------------------------------------------
+    % Ramp up acceleration
+    %---------------------------------------------
+    JrkStart = CACC.gaccstart*PROJimp.gamma;
+    AccStart = CACC.gvelstart*PROJimp.gamma;
+    while true
+        tSeg = TEVO.SolveAccRampSpecifyJrk(JrkStart);
+        if TEVO.TestGreaterSpecifyAcc(AccStart)
+            break
+        end
+        TEVO.BuildTimeArray(tSeg);
+        TEVO.PlotEvolution(100);
+        TEVO.MoveNext();
     end
-    TEVO.BuildTimeArray(tSeg);
-    TEVO.PlotEvolution(100);
-    TEVO.MoveNext();
+    
+    %---------------------------------------------
+    % Maintain acceleration
+    %---------------------------------------------
+    FracDecel = CACC.fracdecel;
+    while true
+        tSeg = TEVO.SolveSpecifyAcc(AccStart); 
+        if TEVO.TestFractionOfP(FracDecel)
+            TEVO.PlotSegmentMarker;
+            break
+        end
+        TEVO.BuildTimeArray(tSeg);
+        TEVO.PlotEvolution(100);
+        TEVO.MoveNext();
+    end
+    
+    %---------------------------------------------
+    % Ramp to deceleration
+    %---------------------------------------------
+    JrkTransition = CACC.gacctransition*PROJimp.gamma;
+    AccReturn = CACC.gvelreturn*PROJimp.gamma;
+    while true
+        tSeg = TEVO.SolveAccRampSpecifyJrk(-JrkTransition); 
+        if TEVO.TestLessSpecifyAcc(-AccReturn)
+            TEVO.PlotSegmentMarker;
+            break
+        end
+        TEVO.BuildTimeArray(tSeg);
+        TEVO.PlotEvolution(100);
+        TEVO.MoveNext();
+    end
+    
+    %---------------------------------------------
+    % Finish
+    %---------------------------------------------
+    regfunc = str2func('ReturnTwk2Regression');
+    Loc = TEVO.GetLoc();
+    func = @(Twk) regfunc(TEVO,PROJdgn,Loc,AccReturn,Twk);
+    options = optimoptions(@lsqnonlin,'FiniteDifferenceStepSize',1e-7);
+    lb = 0.99;
+    ub = 1.01;
+    Twk0 = CACC.returntwk;
+    try
+        CACC.returntwk2 = lsqnonlin(func,Twk0,lb,ub,options);
+        break
+    catch
+        CACC.fracdecel = CACC.fracdecel*1.025;
+    end
 end
-
-%---------------------------------------------
-% Finish
-%---------------------------------------------
-regfunc = str2func('ReturnTwk2Regression');
-Loc = TEVO.GetLoc();
-func = @(Twk) regfunc(TEVO,PROJdgn,Loc,AccReturn,Twk);
-options = optimoptions(@lsqnonlin,'FiniteDifferenceStepSize',1e-7);
-lb = 0.99;
-ub = 1.01;
-Twk0 = CACC.returntwk;
-CACC.returntwk2 = lsqnonlin(func,Twk0,lb,ub,options);
 
 %TEVO.PlotEvolutionFullSetup();
 %TEVO.PlotEvolutionFull();

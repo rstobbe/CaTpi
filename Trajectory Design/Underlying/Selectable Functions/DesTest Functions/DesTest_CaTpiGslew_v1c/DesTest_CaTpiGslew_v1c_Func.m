@@ -44,7 +44,7 @@ if strcmp(func,'TestPlot')
     for n = 1:length(KSA(:,1,1))
         plot3(PROJdgn.rad*KSA(n,:,1),PROJdgn.rad*KSA(n,:,2),PROJdgn.rad*KSA(n,:,3),'k','linewidth',1);
     end
-    xlim([-PROJdgn.rad*1.1,PROJdgn.rad*1.1]); ylim([-PROJdgn.rad*1.1,PROJdgn.rad*1.1]); zlim([-PROJdgn.rad*1.1,PROJdgn.rad*1.1]);
+    xlim([-PROJdgn.rad*1.1,PROJdgn.rad*1.1]); ylim([-PROJdgn.rad*1.1,PROJdgn.rad*1.1]); zlim([-PROJdgn.rad*PROJdgn.elip*1.1,PROJdgn.rad*PROJdgn.elip*1.1]);
     xlabel('kStep_x'); ylabel('kStep_y'); zlabel('kStep_z');  
     title('TPI Waveform');
 
@@ -70,6 +70,7 @@ if strcmp(func,'TestPlot')
     maxmagacc0 = max(magacc0,[],1);
     maxmagjerk0 = max(magjerk0,[],1);
     r = (sqrt(KSA(1,:,1).^2 + KSA(1,:,2).^2 + KSA(1,:,3).^2)); 
+    r = r/max(r);        % calc above might be on an elip dimension
 
     %------------------------------------------
     % Find p
@@ -99,10 +100,10 @@ if strcmp(func,'TestPlot')
             plot(r,magvel0(PROJdgn.ConstCones(end),:)/gamma,'g-');
         end
     end 
-    plot([p p],[0 20],'r:');
+    plot([p p],[0 80],'r');
     xlabel('rad'); ylabel('Gradient Magnitude (mT/m)'); title('Gradient Magnitude');
     xlim([0 1]);
-    ylim([0 20]);
+    ylim([0 80]);
     subplot(2,2,2); hold on;
     plot(r,magacc0/gamma,'k-');
     if isfield(PROJdgn,'ConstCones')
@@ -112,7 +113,7 @@ if strcmp(func,'TestPlot')
             plot(r,magacc0(PROJdgn.ConstCones(end),:)/gamma,'g-');
         end
     end    
-    plot([p p],[0 250],'r:');
+    plot([p p],[0 250],'r');
     xlabel('rad'); ylabel('Gradient Speed (mT/m/ms)'); title('Gradient Speed');
     xlim([0 1]);
     ylim([0 250]); 
@@ -125,7 +126,7 @@ if strcmp(func,'TestPlot')
             plot(r,magjerk0(PROJdgn.ConstCones(end),:)/gamma,'g-');
         end
     end   
-    plot([p p],[0 1e4],'r:');
+    plot([p p],[0 1e4],'r');
     xlabel('rad'); ylabel('Gradient Acceleration (mT/m/ms2)'); title('Gradient Acceleration');
     xlim([0 1]);     
     ylim([0 1e4]);

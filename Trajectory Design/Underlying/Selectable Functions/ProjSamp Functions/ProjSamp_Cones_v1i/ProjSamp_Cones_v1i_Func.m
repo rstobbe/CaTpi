@@ -39,7 +39,12 @@ end
 %----------------------------------------------------  
 func = str2func([PSMP.PCDfunc,'_Func']);
 INPUT.PROJdgn = PROJdgn;
-INPUT.OSampPhi = PSMP.OSampPhi;
+if isfield(PSMP,'OSampPhi')
+    INPUT.OSampPhi = PSMP.OSampPhi;
+end
+if isfield(PSMP,'PhiThetaFrac')
+    INPUT.PhiThetaFrac = PSMP.PhiThetaFrac;
+end
 INPUT.eproj = eproj;
 INPUT.TST = TST;
 [PCD,err] = func(PCD,INPUT);

@@ -2,7 +2,7 @@
 % 
 %==================================================
 
-function [DESMETH,err] = DesMeth_CaTpi_v1e_Func(DESMETH,INPUT)
+function [DESMETH,err] = DesMeth_CaTpi_v1f_Func(DESMETH,INPUT)
 
 Status('busy','Create CaTpi Design');
 Status2('done','',2);
@@ -27,7 +27,7 @@ clear INPUT
 % Describe Trajectory
 %----------------------------------------------------
 DESMETH.type = 'TPI';
-DESMETH.genprojfunc = 'GenProj_CaTpi_v1e';
+DESMETH.genprojfunc = 'GenProj_CaTpi_v1f';
 
 %------------------------------------------
 % Get Testing Info
@@ -139,6 +139,11 @@ KSA = squeeze(OUTPUT.KSA);
 T0 = OUTPUT.T;
 clear OUTPUT;
 clear INPUT;
+
+%---------------------------------------------------- 
+% Do Elip
+%---------------------------------------------------- 
+KSA(:,:,3) = KSA(:,:,3)*PROJdgn.elip;
 
 %------------------------------------------
 % Return

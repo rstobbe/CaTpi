@@ -28,8 +28,8 @@ samp = samp - samp(1);
 %samp = PROJdgn.tro*samp/samp(end);
 %---
 
-%rad = sqrt(Kmat(:,:,1).^2 + Kmat(:,:,2).^2 + Kmat(:,:,3).^2);
-rad = sqrt(Kmat(end,:,1).^2 + Kmat(end,:,2).^2 + Kmat(end,:,3).^2);
+rad = sqrt(Kmat(:,:,1).^2 + Kmat(:,:,2).^2 + Kmat(:,:,3).^2);
+%rad = sqrt(Kmat(end,:,1).^2 + Kmat(end,:,2).^2 + Kmat(end,:,3).^2);
 rad = squeeze(mean(rad,1));
 
 rad = rad/max(rad);

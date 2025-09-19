@@ -84,6 +84,7 @@ RADEV = IMETH.RADEV;
 TEND = IMETH.TEND;
 GWFM = IMETH.GWFM;
 SYSRESP = IMETH.SYSRESP;
+KINFO = IMETH.KINFO;
 
 %----------------------------------------------------
 % Save Figure
@@ -123,6 +124,7 @@ IMP.Kmat = IMETH.Kmat;
 IMP.Kend = IMETH.Kend;
 IMP.G = IMETH.Gscnr;
 IMP.qTscnr = IMETH.qTscnr;
+IMP.KINFO = KINFO;
 
 Status('done','');
 Status2('done','',2);

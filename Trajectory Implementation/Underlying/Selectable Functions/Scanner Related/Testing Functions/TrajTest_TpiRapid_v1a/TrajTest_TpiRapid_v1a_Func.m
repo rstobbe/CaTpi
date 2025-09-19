@@ -8,7 +8,8 @@ err.flag = 0;
 err.msg = '';
 
 TST.testing = 'Yes';
-TST.testspeed = 'Rapid';
+% TST.testspeed = 'Rapid';
+TST.testspeed = 'Standard';
 TST.initstrght = 'No';
 TST.relprojlenmeas = 'No';
 TST.testprojsubset = 'Yes';
@@ -20,6 +21,14 @@ TST.SYSRESP.Vis = 'Yes';
 TST.GVis = 'Yes';
 TST.KVis = 'Yes';
 TST.TVis = 'Yes';
+
+if strcmp(TST.figloc,'Centre')
+    TST.figshift = 0;
+elseif strcmp(TST.figloc,'Left')
+    TST.figshift = -1920;    
+elseif strcmp(TST.figloc,'Right')
+    TST.figshift = 1920;
+end
 
 Status('done','');
 Status2('done','',2);

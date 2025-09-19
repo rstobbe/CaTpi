@@ -43,7 +43,7 @@ Tatp = interp1(Rad,T,PROJdgn.p*PROJdgn.kmax);
 hFig = figure(999); hold on; box on;
 plot(T,[0 G]);
 plot([Tatp Tatp],[-10 22]);
-ylim([-10 22]);
+%ylim([-10 22]);
 % xlim([0 10]);
 title('RadialGradient');
 xlabel('(ms)','fontsize',10,'fontweight','bold');

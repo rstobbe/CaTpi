@@ -1,31 +1,21 @@
 %====================================================
 % (v1a)
-%      
+%       
 %====================================================
 
+function [SCRPTipt,PSMP,err] = ProjSamp_ElipSelectOsamp_v1a(SCRPTipt,PSMPipt)
 
-function [SCRPTipt,NUC,err] = H1_v1a(SCRPTipt,SYSipt) 
-
-Status('busy','Get Nucleus Info');
+Status2('busy','Get Info for Projection Sampling',2);
 Status2('done','',3);
 
 err.flag = 0;
 err.msg = '';
 
 %---------------------------------------------
-% Return Panel Input
+% Load Panel Input
 %---------------------------------------------
-NUC = struct();
+PSMP.method = PSMPipt.Func;
 
 Status2('done','',2);
 Status2('done','',3);
-
-
-
-
-
-
-
-
-
 
